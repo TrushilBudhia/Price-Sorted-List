@@ -1,15 +1,11 @@
 const addButton = document.querySelector("#add");
+const itemListJson = document.querySelector(".items-list-json");
 const itemList = document.querySelector(".items-list");
 let listItemArray = [];
-
-function wrapArrayInQuotation(array) {
-    return `${array}`
-};
 
 function sortByPriceAscending(jsonString) {
     // const itemsArray = JSON.parse(jsonString);
     const itemsArray = jsonString;
-    // console.log('itemsArray', itemsArray);
     if (itemsArray.length > 1) {
         const sorted = listItemArray.sort(function (a, b) {
             return b.price - a.price || a.name.localeCompare(b.name);
@@ -23,19 +19,17 @@ function sortByPriceAscending(jsonString) {
 };
 
 function renderItemList() {
-    // const arrayString = wrapArrayInQuotation(listItemArray);
-    // sortByPriceAscending(arrayString);
-    // itemList.innerHTML = "";
-    // for (let i = 0; i < arrayString.length; i++) {
-    //     const listItemEntry = document.createElement('li');
-    //     listItemEntry.textContent = arrayString[i];
-    //     itemList.append(listItemEntry);
-    // }
     const sortedArray = sortByPriceAscending(listItemArray);
+    itemListJson.innerHTML = "";
     itemList.innerHTML = "";
     for (let i = 0; i < sortedArray.length; i++) {
+        const jsonListItemEntry = document.createElement('li');
+        const itemDisplayJson = `{"name": "${sortedArray[i].name}", "price": ${sortedArray[i].price}}`;
+        jsonListItemEntry.textContent = itemDisplayJson;
+        itemListJson.append(jsonListItemEntry);
+
         const listItemEntry = document.createElement('li');
-        const itemDisplay = `{"name": "${sortedArray[i].name}", "price": ${sortedArray[i].price}}`;
+        const itemDisplay = `${sortedArray[i].name} - $${sortedArray[i].price.toFixed(2)}`;
         listItemEntry.textContent = itemDisplay;
         itemList.append(listItemEntry);
     }
@@ -44,14 +38,16 @@ function renderItemList() {
 function addItemAsJson() {
     const itemName = document.querySelector("#item-name").value;
     const itemPrice = Number(document.querySelector("#item-price").value);
-    const itemDisplay = JSON.parse(`{"name": "${itemName}", "price": ${itemPrice}}`);
-    listItemArray.push(itemDisplay);
-    // const listItemEntry = document.createElement('li');
-    // listItemEntry.textContent = itemDisplay;
-    // itemList.appendChild(listItemEntry);
-    // itemList.append(listItemArray);
-    console.log(listItemArray);
-    renderItemList();
+    if (!itemName && !itemPrice) {
+        console.log("Input an item name and price please.");
+        return;
+    }
+    else {
+        const itemDisplay = JSON.parse(`{"name": "${itemName}", "price": ${itemPrice}}`);
+        listItemArray.push(itemDisplay);
+        console.log(listItemArray);
+        renderItemList();
+    }
 };
 
 // var items = '[{"name":"eggs","price":1},{"name":"coffee","price":9.99},{"name":"rice","price":4.04}]'
